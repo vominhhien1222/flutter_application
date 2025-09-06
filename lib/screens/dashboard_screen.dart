@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/dashboard_provider.dart';
+import '../widgets/top_apis_table.dart'; // ✅ Nhớ import TopApisTable
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,11 +16,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     // GỌI API KHI VÀO MÀN HÌNH
-   Future.microtask(() {
-    if (!mounted) return;
-    context.read<DashboardProvider>().loadAll(hours: 24);
-  });
-}
+    Future.microtask(() {
+      if (!mounted) return;
+      context.read<DashboardProvider>().loadAll(hours: 24);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +31,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: const Text('Dashboard'),
         actions: [
           IconButton(
-            onPressed: vm.isLoading ? null : () => vm.loadAll(hours: 24), // 👈 GỌI LẠI
+            onPressed: vm.isLoading ? null : () => vm.loadAll(hours: 24),
             icon: const Icon(Icons.refresh),
-          )
+          ),
         ],
       ),
       body: vm.isLoading
@@ -48,23 +50,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       FilledButton(
                         onPressed: vm.retry,
                         child: const Text('Thử lại'),
-                      )
+                      ),
                     ],
                   ),
                 )
               : ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
+                    // ----- DASHBOARD CARD -----
                     if (vm.dashboard != null)
                       Card(
                         child: ListTile(
                           title: const Text('Tổng request'),
-                          trailing: Text('${vm.dashboard!.totalRequests}',
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          trailing: Text(
+                            '${vm.dashboard!.totalRequests}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    // … các card khác (login, business, registrations, topApis)
+
+                    // ----- HIỂN THỊ BẢNG TOP APIS -----
+                    const SizedBox(height: 12),
+                    const TopApisTable(top: 10, hours: 24),
                   ],
                 ),
     );
